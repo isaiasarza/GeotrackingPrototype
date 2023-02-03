@@ -35,7 +35,6 @@ function App(): JSX.Element {
     } catch (error) {
       console.error(error);
     } finally {
-      console.log("finally", mapsInfo)
       setLoading(false);
     }
   };
