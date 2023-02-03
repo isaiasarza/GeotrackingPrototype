@@ -5,26 +5,51 @@
  * @format
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
-import MapView, {Marker, PROVIDER_GOOGLE, Circle} from 'react-native-maps';
+import MapView, {Marker, PROVIDER_GOOGLE, Circle, LatLng} from 'react-native-maps';
 
 import Config from 'react-native-config';
 import MapViewDirections from 'react-native-maps-directions';
+import { getServiceOrders } from './src/shared/apis/ServiceOrders';
+import { MapsInfo } from './src/shared/interfaces/MapsInfo';
+import { getMapsInfo } from './src/shared/helper/MapsInfoCast';
+
+
 
 function App(): JSX.Element {
-  const origin = {latitude: -42.7692, longitude: -65.03851};
-  const destination = {latitude: -42.773038, longitude: -65.05112};
-  const waypoints = [
-    {latitude: -42.784831, longitude: -65.057518},
-    {latitude: -42.777933, longitude: -65.065929},
-  ];
-  const coordinates = [origin, ...waypoints, destination];
+
+  const [isLoading, setLoading] = useState(true);
+  const [mapsInfo, setMapsInfo] = useState<MapsInfo>({
+    origin: {latitude: -42.7692, longitude: -65.03851},
+    destination: {latitude: -42.773038, longitude: -65.05112},
+    coordinates: [{latitude: -42.7692, longitude: -65.03851}, {latitude: -42.773038, longitude: -65.05112}],
+    waypoints: [],
+  })
+
+  const initializeData = async () => {
+    try {
+      const serviceOrders = await getServiceOrders();
+      setMapsInfo(getMapsInfo(serviceOrders))
+    } catch (error) {
+      console.error(error);
+    } finally {
+      console.log("finally", mapsInfo)
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    initializeData();
+  }, []);
+
   const GOOGLE_MAPS_API_KEY = Config.GOOGLE_MAPS_API_KEY ?? ''; //
   return (
     <View style={styles.container}>
-      <MapView
+      {
+        isLoading ? <Text>Loading data</Text> :
+        <MapView
         style={styles.map}
         minZoomLevel={14}
         provider={PROVIDER_GOOGLE}
@@ -35,19 +60,20 @@ function App(): JSX.Element {
           longitudeDelta: 0.0421,
         }}
       >
-        {coordinates.map((coordinate, key) => {
+        {mapsInfo.coordinates.map((coordinate, key) => {
           return (
-            <Marker coordinate={coordinate} pinColor={'#5c881a'} title={'Parada #' + key} description={'Description'}></Marker>
+            <Marker key={key} coordinate={coordinate} pinColor={'#5c881a'} title={'Parada #' + key} description={'Description'}></Marker>
           );
         })}
         <MapViewDirections
-          origin={origin}
-          destination={destination}
-          waypoints={waypoints}
+          origin={mapsInfo.origin}
+          destination={mapsInfo.destination}
+          waypoints={mapsInfo.waypoints}
           apikey={GOOGLE_MAPS_API_KEY}
           strokeColor={'#5c881a'}
         />
       </MapView>
+      }
     </View>
   );
 }
