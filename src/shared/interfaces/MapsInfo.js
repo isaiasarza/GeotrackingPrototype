@@ -1,5 +1,5 @@
 export interface MapsInfo {
-    coordinates: LatLng[];
+  coordinates: LatLng[];
   origin: LatLng;
   destination: LatLng;
   waypoints: LatLng[];
