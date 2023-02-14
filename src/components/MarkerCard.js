@@ -7,15 +7,20 @@ import {
   OUTER_CARD_WIDTH,
 } from '../utils/constants';
 
-import {ServiceOrderDTO} from '../shared/dto/ServiceOrderDTO';
+import {ServiceOrderDTO, SERVICE_ORDER_DESCRIPTION, SERVICE_ORDER_STATUS} from '../shared/dto/ServiceOrderDTO';
 
 import Icon from 'react-native-vector-icons/FontAwesome';
 
+//import Icon from 'react-native-vector-icons/EvilIcons'
+
+
+
 const MarkerCard = ({serviceOrder, onClose}) => {
-  const { number, description, serviceType, serviceSubType } = serviceOrder;
+  const { number, description, serviceType, serviceSubType, status } = serviceOrder;
   const { firstname, lastname } = serviceOrder?.customerInformation;
   const { areaCode, phoneNumbe } = serviceOrder?.customerInformation?.telephones[0];
   const { streetName, streetNumber } = serviceOrder?.destination;
+  const { statusDescription, statusColor, statusIcon  } = SERVICE_ORDER_STATUS[status];
   return (
     <View style={styles.outerCard}>
       <View style={styles.innerCard}>
@@ -24,7 +29,7 @@ const MarkerCard = ({serviceOrder, onClose}) => {
             <Text numberOfLines={1} style={styles.name}>
               {`Orden de Servicio #${number}`}              
             </Text>
-            <Pressable style={styles.icon} onPress={onClose}><Icon name="close" size={15}/></Pressable>      
+            <Pressable onPress={onClose}><Icon name="close" size={15}/></Pressable>      
           </View>
           <View style={styles.bottom}>
             <Text numberOfLines={2} style={styles.status}>
@@ -34,6 +39,11 @@ const MarkerCard = ({serviceOrder, onClose}) => {
             <Text numberOfLines={2} style={styles.status}>
               Tipo de Servicio:{' '}
               <Text style={styles.black}>{serviceType}</Text>
+            </Text>
+            <Text numberOfLines={2} style={styles.status}>
+              Estado del Servicio:
+              <Text style={styles.black}>{statusDescription}</Text>
+              <View><Icon name={statusIcon} color={statusColor} size={15}/></View>
             </Text>
             <Text style={styles.status} numberOfLines={1}>
               Teléfono: <Text style={styles.black}>{`${areaCode}-${phoneNumbe}`}</Text>
@@ -82,29 +92,18 @@ const styles = StyleSheet.create({
     elevation: 6,
     padding: 10,
   },
-  img: {height: '100%', width: '30%', borderRadius: 6},
-  noView: {
-    height: '100%',
-    width: '35%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgb(200,200,200)',
-    borderRadius: 5,
-  },
-  noTxt: {
-    color: 'grey',
-    textAlign: 'center',
-  },
   right: {flex: 1, paddingLeft: 10, alignItems: 'flex-start'},
   top: {
-    position: 'relative',
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingBottom: 2,
     borderBottomWidth: 1,
     borderColor: '#E5E5E5',
   },
-  name: {fontSize: 14.5, width: '70%', borderWidth: 2, borderColor: '#000'},
-  icon: {width: '10%', borderWidth: 2, borderColor: '#000'},
-  bottom: {flex: 1, alignItems: 'flex-start'},
+  name: {fontSize: 14.5},
+  bottom: {flex: 1, alignItems: 'flex-start', justifyContent: 'space-between',},
   status: {
     fontSize: 11,
     color: 'grey',

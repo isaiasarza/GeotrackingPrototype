@@ -9,3 +9,12 @@ export const INNER_CARD_HEIGHT = 160
 export const INNER_CARD_WIDTH = (width) * 0.8;
 
 export const MAP_HEIGHT = height - 100;
+
+/** 
+ * 
+#5C881A
+#A6A033
+#EBB65C
+#FFCE93
+#E62B79
+  */

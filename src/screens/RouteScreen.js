@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Modal, StyleSheet, Text, View} from 'react-native';
-import {ServiceOrderDTO} from '../shared/dto/ServiceOrderDTO';
+import {ServiceOrderDTO, SERVICE_ORDER_ICON} from '../shared/dto/ServiceOrderDTO';
 import MapView, {
   Marker,
   PROVIDER_GOOGLE,
@@ -68,15 +68,15 @@ export const RouteScreen = ({navigation}) => {
             longitudeDelta: 0.0421,
           }}
         >
-          {/* <View style={styles.mapContent}> */}
           {mapsInfo.coordinates.map((coordinate, key) => {
             const serviceOrder: ServiceOrderDTO = serviceOrders[key];
-            const number = key + 1;
+            const {status} = serviceOrder;
+            const pinColor = SERVICE_ORDER_ICON[status];
             return (
               <Marker
                 key={key}
                 coordinate={coordinate}
-                pinColor={'#5c881a'}
+                pinColor={pinColor}
                 onPress={() => setCurrentServiceOrder(serviceOrder)}
               ></Marker>
             );
@@ -88,19 +88,17 @@ export const RouteScreen = ({navigation}) => {
             waypoints={mapsInfo.waypoints}
             apikey={GOOGLE_MAPS_API_KEY}
             strokeColor={'#5c881a'}
+            strokeWidth={4}
           />
-          {/* </View> */}
         </MapView>
       )}
-      {currentServiceOrder ? (
+      {currentServiceOrder && (
         <View style={styles.centeredView}>
           <MarkerCard
             serviceOrder={currentServiceOrder}
             onClose={() => setCurrentServiceOrder(null)}
           ></MarkerCard>
         </View>
-      ) : (
-        ''
       )}
     </View>
   );
@@ -113,36 +111,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   map: {
-    // flex: 1,
     width: '90%',
     height: '90%',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
   },
-  mapContent: {flex: 1},
   centeredView: {
     flex: 1,
     bottom: '5%',
     position: 'absolute',
   },
 });
-
-const ServiceOrderMarker = props => {
-  const key = props.key;
-  const serviceOrder: ServiceOrderDTO = props.serviceOrder;
-  const coordinate: LatLng = ({
-    lat: latitude,
-    long: longitude,
-  } = serviceOrder?.destination);
-  const description = `${serviceOrder.destination.streetName} - ${serviceOrder.destination.streetNumber}\n${serviceOrder?.destination?.referenceInfo}`;
-  return (
-    <Marker
-      key={key}
-      coordinate={coordinate}
-      pinColor={'#5c881a'}
-      title={'Parada #' + key}
-      description={serviceOrder.description}
-    ></Marker>
-  );
-};
