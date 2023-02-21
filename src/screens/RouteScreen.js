@@ -1,6 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {Modal, StyleSheet, Text, View} from 'react-native';
-import {ServiceOrderDTO, SERVICE_ORDER_ICON} from '../shared/dto/ServiceOrderDTO';
+import {
+  ServiceOrderDTO,
+  SERVICE_ORDER_ICON,
+  SERVICE_ORDER_STATUS,
+} from '../shared/dto/ServiceOrderDTO';
 import MapView, {
   Marker,
   PROVIDER_GOOGLE,
@@ -14,6 +18,9 @@ import {getServiceOrders} from '../../src/shared/apis/ServiceOrders';
 import {MapsInfo} from '../../src/shared/interfaces/MapsInfo';
 import {getMapsInfo} from '../../src/shared/helper/MapsInfoCast';
 import MarkerCard from '../components/MarkerCard';
+import {NAVIGATION_ROUTES} from '../utils/constants';
+
+import Icon from 'react-native-vector-icons/Ionicons';
 
 export const RouteScreen = ({navigation}) => {
   const mapInfoExample = {
@@ -70,15 +77,33 @@ export const RouteScreen = ({navigation}) => {
         >
           {mapsInfo.coordinates.map((coordinate, key) => {
             const serviceOrder: ServiceOrderDTO = serviceOrders[key];
-            const {status} = serviceOrder;
-            const pinColor = SERVICE_ORDER_ICON[status];
+            const {number, status} = serviceOrder;
+            const {statusDescription, statusColor} = SERVICE_ORDER_STATUS[
+              status
+            ];
+
+            const title = `Parada #${key + 1}`;
+            const description = `Orden #${number}`
+
+            const markerIcon =
+              currentServiceOrder?.number == number
+                ? 'location'
+                : 'location-outline';
+
+            const zIndex =
+              currentServiceOrder?.number == number
+                ? 1
+                : 0;
             return (
               <Marker
                 key={key}
+                title={title}
+                description={description}
                 coordinate={coordinate}
-                pinColor={pinColor}
+                pinColor={statusColor}
                 onPress={() => setCurrentServiceOrder(serviceOrder)}
-              ></Marker>
+              >
+              </Marker>
             );
           })}
 
@@ -96,6 +121,16 @@ export const RouteScreen = ({navigation}) => {
         <View style={styles.centeredView}>
           <MarkerCard
             serviceOrder={currentServiceOrder}
+            onCancel={() =>
+              navigation.navigate(NAVIGATION_ROUTES.CANCEL_DELIVERY_MODAL, {
+                serviceOrder: currentServiceOrder,
+              })
+            }
+            onConfirm={() =>
+              navigation.navigate(NAVIGATION_ROUTES.CONFIRM_DELIVERY_MODAL, {
+                serviceOrder: currentServiceOrder,
+              })
+            }
             onClose={() => setCurrentServiceOrder(null)}
           ></MarkerCard>
         </View>
@@ -111,8 +146,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   map: {
-    width: '90%',
-    height: '90%',
+    width: '100%',
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 10,
