@@ -20,7 +20,9 @@ import {getMapsInfo} from '../../src/shared/helper/MapsInfoCast';
 import MarkerCard from '../components/MarkerCard';
 import {NAVIGATION_ROUTES} from '../utils/constants';
 
-import Icon from 'react-native-vector-icons/Ionicons';
+import Ionicon from 'react-native-vector-icons/Ionicons';
+
+import Entypo from 'react-native-vector-icons/Entypo';
 
 export const RouteScreen = ({navigation}) => {
   const mapInfoExample = {
@@ -75,6 +77,12 @@ export const RouteScreen = ({navigation}) => {
             longitudeDelta: 0.0421,
           }}
         >
+          <Marker
+          title="Tu posición actual!"
+            coordinate={{latitude: -42.760863, longitude: -65.039007}}
+          >
+            <Ionicon name="navigate-circle" size={25}></Ionicon>
+          </Marker>
           {mapsInfo.coordinates.map((coordinate, key) => {
             const serviceOrder: ServiceOrderDTO = serviceOrders[key];
             const {number, status} = serviceOrder;
@@ -83,17 +91,16 @@ export const RouteScreen = ({navigation}) => {
             ];
 
             const title = `Parada #${key + 1}`;
-            const description = `Orden #${number}`
+            const description = `Orden #${number}`;
 
             const markerIcon =
               currentServiceOrder?.number == number
                 ? 'location'
                 : 'location-outline';
 
-            const zIndex =
-              currentServiceOrder?.number == number
-                ? 1
-                : 0;
+           // const icon = 
+
+            const zIndex = currentServiceOrder?.number == number ? 1 : 0;
             return (
               <Marker
                 key={key}
@@ -103,6 +110,10 @@ export const RouteScreen = ({navigation}) => {
                 pinColor={statusColor}
                 onPress={() => setCurrentServiceOrder(serviceOrder)}
               >
+                {key == 0 && (<Entypo name="location" color={statusColor} size={25}></Entypo>)}
+                {key != 0 && key < serviceOrders.length - 1 && (<Entypo name="location-pin" color={statusColor} size={25}></Entypo>)}
+                {key == serviceOrders.length - 1 && (<Entypo name="flag" color={statusColor} size={25}></Entypo>)}
+                
               </Marker>
             );
           })}
@@ -114,6 +125,7 @@ export const RouteScreen = ({navigation}) => {
             apikey={GOOGLE_MAPS_API_KEY}
             strokeColor={'#5c881a'}
             strokeWidth={4}
+            
           />
         </MapView>
       )}

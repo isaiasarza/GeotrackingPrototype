@@ -16,16 +16,11 @@ export const CancelDeliveryModal = ({route}) => {
   const {
     number,
     description,
-    serviceType,
-    serviceSubType,
     status,
   } = serviceOrder;
-  const {firstname, lastname} = serviceOrder?.customerInformation;
-  const {
-    areaCode,
-    phoneNumbe,
-  } = serviceOrder?.customerInformation?.telephones[0];
-  const {streetName, streetNumber} = serviceOrder?.destination;
+  const {description: serviceType} = serviceOrder?.type;
+  const {firstName, lastName, phone} = serviceOrder?.customer;
+  const {streetName, streetNumber} = serviceOrder?.destination?.addresses;
   const {statusDescription, statusColor, statusIcon} = SERVICE_ORDER_STATUS[
     status
   ];
@@ -64,11 +59,11 @@ export const CancelDeliveryModal = ({route}) => {
         </View>
         <Text style={styles.text}>
           Nombre y Apellido:{' '}
-          <Text style={styles.black}>{`${firstname} ${lastname}`}</Text>
+          <Text style={styles.black}>{`${firstName} ${lastName}`}</Text>
         </Text>
         <Text style={styles.text} numberOfLines={1}>
           Teléfono:{' '}
-          <Text style={styles.black}>{`${areaCode}-${phoneNumbe}`}</Text>
+          <Text style={styles.black}>{phone}</Text>
         </Text>
       </View>
       <View style={[styles.sectionContainer, styles.shadowProp]}>
@@ -153,7 +148,7 @@ export const CancelDeliveryModal = ({route}) => {
           <Button
             titleStyle={styles.sectionContainer.buttonsContainer.titleButton}
             buttonStyle={styles.sectionContainer.buttonsContainer.confirmButton}
-            title="Cancelar Entrega"
+            title="Cancelar Visita"
             onPress={() => console.log('onCancel')}
           ></Button>
         </View>

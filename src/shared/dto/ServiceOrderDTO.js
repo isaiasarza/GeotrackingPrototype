@@ -1,57 +1,72 @@
-export interface AssignedDeliveryUser {
-  _id: string;
-  userId: string;
-  firstname: string;
-  lastname: string;
+export interface Type {
+  id: number;
+  name: string;
+  description: string;
 }
 
-export interface Telephone {
-  countryCode: string;
-  areaCode: string;
-  phoneNumbe: string;
+export interface AssignedUser {
+  userId: number;
+  firstName: string;
+  lastName: string;
+  username: string;
+  password: string;
+  lastLogin: Date;
+  status: string;
 }
 
-export interface CustomerInformation {
-  firstname: string;
-  lastname: string;
-  telephones: Telephone[];
+export interface Addresses {
+  streetName: string;
+  streetNumber: string;
+  floor: string;
+  departamentNumber: string;
+  city: string;
+  zipCode: string;
+  state: string;
+  country: string;
 }
 
-export interface ProductInformation {
+export interface Coordinate {
+  latitude: number;
+  longitude: number;
+}
+
+export interface Destination {
+  addresses: Addresses;
+  coordinate: Coordinate;
+  referenceInfo: string;
+}
+
+export interface Customer {
+  id: number;
+  customerNumber: string;
+  documentNumer: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
+export interface ServiceDetail {
   title: string;
   description: string;
 }
 
-export interface Destination {
-  streetName: string;
-  streetNumber: string;
-  locality: string;
-  state: string;
-  country: string;
-  referenceInfo: string;
-  lat: number;
-  long: number;
-}
-
 export interface ServiceOrderDTO {
-  _id: number;
-  number: number;
-  serviceOrderCode: string;
-  serviceType: string;
-  serviceSubType: string;
-  priority: string;
+  id: number;
+  number: string;
   description: string;
-  status: string;
-  assignedDeliveryUser: AssignedDeliveryUser;
   observations: string;
-  creationTime: Date;
-  assignedTime: Date;
-  estimatedResolutionTime: Date;
-  resolutionTime: Date;
-  customerInformation: CustomerInformation;
-  productInformation: ProductInformation[];
+  type: Type;
+  status: string;
+  priority: string;
+  assignedUser: AssignedUser;
   destination: Destination;
-  otherInformation: any[];
+  creationTime: Date;
+  assignedTime?: any;
+  estimatedResolutionTime: Date;
+  resolutionTime?: any;
+  customer: Customer;
+  serviceDetail: ServiceDetail;
 }
 
 export const SERVICE_ORDER_STATUS = {

@@ -20,16 +20,11 @@ const MarkerCard = ({serviceOrder, onCancel, onConfirm, onClose}) => {
   const {
     number,
     description,
-    serviceType,
-    serviceSubType,
     status,
   } = serviceOrder;
-  const {firstname, lastname} = serviceOrder?.customerInformation;
-  const {
-    areaCode,
-    phoneNumbe,
-  } = serviceOrder?.customerInformation?.telephones[0];
-  const {streetName, streetNumber} = serviceOrder?.destination;
+  const {firstName, lastName, phone} = serviceOrder?.customer;
+  const {streetName, streetNumber} = serviceOrder?.destination.addresses;
+  const {description: serviceType} = serviceOrder?.type;
   const {statusDescription, statusColor, statusIcon} = SERVICE_ORDER_STATUS[
     status
   ];
@@ -66,15 +61,14 @@ const MarkerCard = ({serviceOrder, onCancel, onConfirm, onClose}) => {
             </View>
             <Text numberOfLines={2} style={styles.text}>
               Solicitante:{' '}
-              <Text style={styles.black}>{`${firstname} ${lastname}`}</Text>
+              <Text style={styles.black}>{`${firstName} ${lastName}`}</Text>
             </Text>
             <Text numberOfLines={2} style={styles.text}>
               Tipo de Servicio: <Text style={styles.black}>{serviceType}</Text>
             </Text>
 
             <Text style={styles.text} numberOfLines={1}>
-              Teléfono:{' '}
-              <Text style={styles.black}>{`${areaCode}-${phoneNumbe}`}</Text>
+              Teléfono: <Text style={styles.black}>{phone}</Text>
             </Text>
             <Text style={styles.text} numberOfLines={2}>
               Dirección:{' '}
@@ -83,7 +77,7 @@ const MarkerCard = ({serviceOrder, onCancel, onConfirm, onClose}) => {
               </Text>
             </Text>
             <Text numberOfLines={4} style={styles.text}>
-              Observaciones: <Text style={styles.black}>{description}</Text>
+              Descripción: <Text style={styles.black}>{description}</Text>
             </Text>
             <View style={styles.buttonsContainer}>
               <Button
